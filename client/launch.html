@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Launch | {{NAME}}</title><meta name="description" content="Launch a Solana token with its extensions in one transaction: transfer fee, transfer hook and on-chain metadata. See its risk label before you sign.">
+<meta property="og:title" content="Launch | {{NAME}}"><meta property="og:description" content="One transaction: a Token-2022 mint with a transfer fee, a transfer hook and on-chain metadata. Read the label before you sign."><meta property="og:image" content="{{ORIGIN}}/og.png"><meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/mark.svg"><link rel="stylesheet" href="/style.css">
+<style>
+main{padding:120px 0 90px;min-height:100vh;position:relative}
+.head{display:flex;justify-content:space-between;align-items:flex-end;gap:24px;flex-wrap:wrap;margin-bottom:26px}.head h1{font:500 clamp(38px,5vw,64px)/1 var(--sans);letter-spacing:-.03em}
+.tabs{display:inline-flex;gap:4px;padding:5px;border-radius:999px;background:rgba(9,7,18,.7);border:1px solid var(--line);flex-wrap:wrap}
+.tabs button{padding:9px 20px;border-radius:999px;font:500 15px var(--sans);color:var(--lav2)}.tabs button.on{background:linear-gradient(100deg,#b98cff,#14f195);color:#07060d}
+.pane{display:none}.pane.on{display:block}
+.cols{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);gap:16px;align-items:start}.side{position:sticky;top:96px;display:grid;gap:16px}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:14px}.row3{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:14px}.gap{margin-top:16px}
+.presets{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.ps{text-align:left;padding:14px 16px;border-radius:18px;border:1px solid var(--line2);background:rgba(9,7,18,.5);transition:.2s}.ps b{display:block;font:500 16px var(--sans);margin-bottom:4px}.ps span{font-size:13px;line-height:1.4;color:var(--mut);display:block}
+.ps:hover{border-color:rgba(170,140,255,.55)}.ps.on{border-color:transparent;background:linear-gradient(140deg,rgba(153,69,255,.32),rgba(20,241,149,.2));box-shadow:0 0 0 1px rgba(20,241,149,.55) inset}.ps.on span{color:var(--dim)}
+.sw{display:flex;gap:14px;align-items:flex-start;padding:13px 0;border-bottom:1px solid var(--line);cursor:pointer}.sw:last-child{border:0}.sw input{position:absolute;opacity:0;pointer-events:none}
+.sw i{flex:none;width:42px;height:24px;border-radius:999px;background:rgba(170,140,255,.16);border:1px solid var(--line2);position:relative;transition:.2s;margin-top:2px}.sw i:after{content:'';position:absolute;left:3px;top:3px;width:16px;height:16px;border-radius:50%;background:var(--lav2);transition:.2s}
+.sw input:checked+i{background:linear-gradient(100deg,#9945ff,#14f195);border-color:transparent}.sw input:checked+i:after{left:21px;background:#07060d}.sw input:focus-visible+i{outline:2px solid var(--lav2);outline-offset:2px}
+.sw b{display:block;font:500 15.5px var(--sans)}.sw span span{display:block;font-size:13.5px;color:var(--mut);line-height:1.4}
+.pw{display:grid;grid-template-columns:repeat(2,1fr);gap:6px}.bit{padding:8px 13px;border-radius:11px;border:1px solid var(--line);font:400 13.5px var(--sans);color:var(--mut)}.bit.on{color:#07060d;background:linear-gradient(100deg,#b98cff,#14f195);border-color:transparent}
+.label{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:16px}.label h3{margin:0}
+.caps{display:grid;gap:10px;margin-top:18px;justify-items:start}.cap{display:flex;gap:12px;align-items:flex-start}.cap span:last-child{font-size:15px;color:var(--dim)}.cap b{color:var(--ink);font-weight:500}
+.box{display:flex;gap:10px;align-items:center;background:rgba(7,5,14,.8);border:1px solid var(--line2);border-radius:14px;padding:12px 14px;font:400 13.5px var(--mono);word-break:break-all}.box button{flex:none;color:var(--lav2);font:500 12px var(--mono);letter-spacing:.1em;text-transform:uppercase}
+.steps{display:grid;gap:8px;margin-top:14px}.st{display:flex;gap:10px;align-items:center;font-size:15px;color:var(--mut)}.st i{width:9px;height:9px;border-radius:50%;background:var(--line2);flex:none}.st.on{color:var(--ink)}.st.on i{background:#14f195;box-shadow:0 0 12px #14f195}.st.now i{background:var(--lav2);animation:pu 1s infinite}
+@keyframes pu{50%{opacity:.3}}
+.tk{display:flex;align-items:center;gap:12px}.tk img,.tk i{width:30px;height:30px;border-radius:50%;background:rgba(170,140,255,.14);flex:none;object-fit:cover}
+.note{font-size:14px;color:var(--mut);margin-top:12px}
+@media(max-width:900px){.cols,.row2,.row3,.presets,.pw{grid-template-columns:1fr}.side{position:static}table.t .hide{display:none}}
+@media(prefers-reduced-motion:reduce){.st.now i{animation:none}}
+</style></head><body>
+<main><div class="glow" style="width:560px;height:560px;left:-200px;top:-80px;background:#9945ff;opacity:.35"></div><div class="glow" style="width:480px;height:480px;right:-180px;top:300px;background:#14f195;opacity:.14"></div>
+<div class="wrap" style="position:relative">
+  <div class="head"><div><div class="eyebrow">Token-2022 launchpad</div><h1 style="margin-top:14px">Launch with the label on</h1></div><button class="pill dk" id="wallet">Connect Phantom</button></div>
+  <div class="tabs" id="tabs"><button data-p="create" class="on">Create</button><button data-p="launched">Launched</button><button data-p="fees">Claim fees</button></div>
+
+  <div class="pane on" id="p-create" style="margin-top:22px"><div class="cols">
+    <div style="display:grid;gap:16px">
+      <div class="card"><h3>Rules</h3><p style="margin-bottom:16px">Pick a starting point. Everything below stays editable.</p><div class="presets" id="presets"></div></div>
+      <div class="card"><h3 style="margin-bottom:16px">Token</h3>
+        <div class="row3"><div><label class="l" for="fName">Name</label><input class="inp" id="fName" maxlength="32" placeholder="Cast" style="font-family:var(--sans)"></div><div><label class="l" for="fSym">Symbol</label><input class="inp" id="fSym" maxlength="10" placeholder="CAST"></div><div><label class="l" for="fDec">Decimals</label><input class="inp" id="fDec" value="6" inputmode="numeric"></div></div>
+        <div class="gap"><label class="l" for="fSupply">Supply</label><input class="inp" id="fSupply" value="1,000,000,000" inputmode="numeric"></div>
+        <div class="gap"><label class="l" for="fDesc">Description</label><textarea class="inp" id="fDesc" rows="2" maxlength="600" style="font-family:var(--sans);resize:vertical"></textarea></div>
+        <div class="row2 gap"><div><label class="l" for="fImg">Image link</label><input class="inp" id="fImg" placeholder="https://…/logo.png" spellcheck="false"></div><div><label class="l" for="fUri">Or metadata link</label><input class="inp" id="fUri" placeholder="https:// or ipfs://" spellcheck="false"></div></div>
+        <div class="row2 gap"><div><label class="l" for="fWeb">Website</label><input class="inp" id="fWeb" placeholder="https://" spellcheck="false"></div><div><label class="l" for="fX">X</label><input class="inp" id="fX" placeholder="https://x.com/…" spellcheck="false"></div></div></div>
+      <div class="card"><h3 style="margin-bottom:16px">Extensions</h3>
+        <div class="row2"><div><label class="l" for="fFee">Transfer fee (%)</label><input class="inp" id="fFee" value="0" inputmode="decimal"></div><div><label class="l" for="fMax">Fee cap per transfer (tokens)</label><input class="inp" id="fMax" placeholder="no cap" inputmode="decimal"></div></div>
+        <div class="gap"><label class="l" for="fHook">Transfer hook program</label><input class="inp" id="fHook" placeholder="program address, or leave empty" spellcheck="false"></div>
+        <div class="gap">
+          <label class="sw"><input type="checkbox" id="oLockFee" checked><i></i><span><b>Lock the fee rate</b><span>Nobody, including you, can ever change the rate.</span></span></label>
+          <label class="sw"><input type="checkbox" id="oFixed" checked><i></i><span><b>Fixed supply</b><span>The mint authority is removed in the same transaction.</span></span></label>
+          <label class="sw"><input type="checkbox" id="oNoFreeze" checked><i></i><span><b>No freeze authority</b><span>No address can freeze a holder's account.</span></span></label>
+          <label class="sw"><input type="checkbox" id="oLockHook" checked><i></i><span><b>Lock the hook program</b><span>The hook address can never be swapped for another program.</span></span></label>
+          <label class="sw"><input type="checkbox" id="oLockMeta"><i></i><span><b>Lock the metadata</b><span>Name, symbol and link become permanent.</span></span></label>
+        </div></div>
+    </div>
+    <div class="side">
+      <div class="card" id="labelCard"></div>
+      <div class="card" id="action"><h3>One transaction</h3><p>The mint, its extensions, its metadata and the whole supply are created together. Your wallet pays the rent and receives every token.</p>
+        <div style="display:flex;gap:10px;margin-top:18px;flex-wrap:wrap"><button class="pill lt" id="build">Check against the chain →</button></div><div id="result"></div></div>
+    </div></div></div>
+
+  <div class="pane" id="p-launched" style="margin-top:22px"><div class="card" style="padding:10px 10px 18px"><div class="dim" style="padding:12px 16px" id="lTotal">—</div>
+    <table class="t"><thead><tr><th>Token</th><th>Label</th><th class="hide">Rules</th><th class="hide">Creator</th><th>Launched</th></tr></thead><tbody id="lRows"></tbody></table></div></div>
+
+  <div class="pane" id="p-fees" style="margin-top:22px"><div class="field" style="max-width:760px"><input id="cMint" placeholder="token mint with a transfer fee" spellcheck="false" autocomplete="off"><button class="pill lt sm" id="cGo">Read fees →</button></div><div id="cOut" style="margin-top:20px"></div></div>
+</div></main>
+<script type="module">
+import { nav, foot, api, num, sig, $, esc, short, toast, copy, connect, phantom, web3, decodeTx, toB64, signAndSend } from '/common.js';
+import { POWERS, decodeMint, isMint, TOKEN_2022 } from '/lib/ext.js';
+nav('/launch'); foot();
+const errBox = (e) => '<div class="card"><span class="chip high">' + esc(e.code || 'error') + '</span><p style="margin-top:12px">' + esc(e.message) + '</p></div>';
+const box = (v) => '<div class="box"><span style="flex:1">' + esc(v) + '</span><button data-copy="' + esc(v) + '">Copy</button></div>';
+const show = (p) => { document.querySelectorAll('#tabs button').forEach((b) => b.classList.toggle('on', b.dataset.p === p)); document.querySelectorAll('.pane').forEach((x) => x.classList.toggle('on', x.id === 'p-' + p)); if (p === 'launched') launched(); };
+$('tabs').addEventListener('click', (e) => { const p = e.target.dataset.p; if (!p) return; show(p); history.replaceState(null, '', '/launch' + (p === 'create' ? '' : '#' + p)); });
+document.addEventListener('click', (e) => { const c = e.target.closest('[data-copy]'); if (c) copy(c.dataset.copy); });
+
+// ---- wallet ----
+let wallet = null;
+async function ensureWallet() { if (wallet) return wallet; wallet = await connect(); $('wallet').textContent = short(wallet); return wallet; }
+$('wallet').onclick = () => ensureWallet().then((w) => toast('Connected ' + short(w)), (e) => toast(e.message || 'Wallet refused', true));
+
+// ---- the form, and the label it will carry: decoded in the page by the same code that reads live mints ----
+const ME = 'Creator1111111111111111111111111111111111111';
+const read = () => { const fee = Number($('fFee').value.replace('%', '').trim() || 0); return { name: $('fName').value.trim(), symbol: $('fSym').value.trim(), decimals: Number($('fDec').value), supply: $('fSupply').value.replace(/[,_\s]/g, ''), description: $('fDesc').value.trim(), image: $('fImg').value.trim(), uri: $('fUri').value.trim(), website: $('fWeb').value.trim(), x: $('fX').value.trim(),
+  feeBps: Math.round(fee * 100), maxFee: $('fMax').value.replace(/[,_\s]/g, ''), hookProgram: $('fHook').value.trim(), lockFee: $('oLockFee').checked, keepMintAuthority: !$('oFixed').checked, freezeAuthority: !$('oNoFreeze').checked, lockHook: $('oLockHook').checked, lockMetadata: $('oLockMeta').checked }; };
+function label() { const f = read(), hasFee = f.feeBps > 0 || !f.lockFee, ext = [];
+  if (hasFee) ext.push({ extension: 'transferFeeConfig', state: { transferFeeConfigAuthority: f.lockFee ? null : ME, withdrawWithheldAuthority: ME, newerTransferFee: { transferFeeBasisPoints: f.feeBps }, olderTransferFee: { transferFeeBasisPoints: f.feeBps } } });
+  if (isMint(f.hookProgram)) ext.push({ extension: 'transferHook', state: { programId: f.hookProgram, authority: f.lockHook ? null : ME } });
+  ext.push({ extension: 'tokenMetadata', state: { name: f.name, symbol: f.symbol, uri: f.uri, updateAuthority: f.lockMetadata ? null : ME } });
+  const d = decodeMint('preview', { owner: TOKEN_2022, data: { parsed: { type: 'mint', info: { decimals: f.decimals, supply: '0', mintAuthority: f.keepMintAuthority ? ME : null, freezeAuthority: f.freezeAuthority ? ME : null, extensions: ext } } } });
+  const caps = d.capabilities.filter((c) => c.level !== 'info');
+  $('labelCard').innerHTML = '<div class="label"><h3>' + esc(f.symbol || 'Your token') + ' will read as</h3><span class="chip ' + d.risk.level + '">' + d.risk.level + ' risk</span></div><div class="pw">' + POWERS.slice(0, 8).map((p) => '<div class="bit' + (d.powers.includes(p.key) ? ' on' : '') + '">' + p.label + '</div>').join('') + '</div>' +
+    '<div class="caps">' + (caps.map((c) => '<div class="cap"><span class="chip ' + c.level + '">' + c.level + '</span><span><b>' + esc(c.label) + '.</b> ' + esc(c.note) + '</span></div>').join('') || '<span class="chip ok">no powers over holders</span>') + '</div>' +
+    '<p class="note">This is what every wallet, agent and explorer reading {{NAME}} will be told about your token.</p>';
+  $('oLockFee').closest('.sw').style.display = f.feeBps > 0 || !f.lockFee ? '' : 'none'; $('oLockHook').closest('.sw').style.display = f.hookProgram ? '' : 'none'; }
+let PRESETS = []; const pick = (k) => { const p = PRESETS.find((x) => x.key === k); if (!p) return; const c = p.config; $('fFee').value = String(c.feeBps / 100); $('oLockFee').checked = c.lockFee; $('oFixed').checked = !c.keepMintAuthority; $('oNoFreeze').checked = !c.freezeAuthority; if (!c.needsHook) $('fHook').value = ''; else $('fHook').focus();
+  $('presets').querySelectorAll('.ps').forEach((b) => b.classList.toggle('on', b.dataset.k === k)); stale(); label(); };
+api('/v1/launch/options').then((o) => { PRESETS = o.presets; $('presets').innerHTML = o.presets.map((p) => '<button class="ps" data-k="' + p.key + '"><b>' + esc(p.label) + '</b><span>' + esc(p.note) + '</span></button>').join(''); $('presets').querySelector('.ps').classList.add('on'); }).catch((e) => toast(e.message, true));
+$('presets').addEventListener('click', (e) => { const b = e.target.closest('.ps'); if (b) pick(b.dataset.k); });
+document.querySelector('#p-create').addEventListener('input', (e) => { if (e.target.closest('#result')) return; stale(); label(); });
+
+// ---- build, sign (wallet first, then the mint key made in this tab), send, read back ----
+let built = null, mintKey = null;
+function stale() { if (!built) return; built = null; $('result').innerHTML = ''; $('build').textContent = 'Check against the chain →'; }
+$('build').onclick = async () => { const f = read(); if (!f.name || !f.symbol) return toast('Give the token a name and a symbol', true); if (f.hookProgram && !isMint(f.hookProgram)) return toast('The hook program is not an address', true);
+  try { await ensureWallet(); } catch (e) { return toast(e.message || 'Connect Phantom to continue', true); }
+  $('build').disabled = true; $('result').innerHTML = '<p class="note mono">building and checking against the chain…</p>';
+  try { const W = await web3(); mintKey = W.Keypair.generate(); const r = await api('/v1/launch/build', { ...f, creator: wallet, mint: mintKey.publicKey.toBase58() }); built = r;
+    $('result').innerHTML = '<div style="margin-top:18px"><div class="kv"><span>Mint address</span><span>' + short(r.mint, 6) + '</span></div><div class="kv"><span>Chain check</span><span>' + (r.simulation.ok ? '<span class="chip ok">passes</span>' : '<span class="chip high">fails</span>') + '</span></div><div class="kv"><span>Cost</span><span>' + esc(r.rent.total || r.rent.mint) + '</span></div><div class="kv"><span>You receive</span><span>' + num(r.supply) + ' ' + esc(r.symbol) + '</span></div><div class="kv"><span>Label</span><span><span class="chip ' + r.preview.risk.level + '">' + r.preview.risk.level + ' risk</span></span></div></div>' +
+      (r.simulation.ok ? '' : '<div class="chip high" style="height:auto;padding:8px 14px;white-space:normal;margin-top:12px">' + esc(r.simulation.error) + '</div>') + r.warnings.map((w) => '<div class="chip warning" style="height:auto;padding:8px 14px;white-space:normal;margin-top:8px">' + esc(w) + '</div>').join('') +
+      (r.simulation.ok ? '<div style="display:flex;gap:10px;margin-top:16px;flex-wrap:wrap"><button class="pill lt" id="go">Sign &amp; launch with Phantom</button></div><p class="note">Keep this tab open until the launch confirms: the mint key lives here and nowhere else.</p>' : '');
+    if (r.simulation.ok) { $('build').textContent = 'Check again'; $('go').onclick = launch; }
+  } catch (e) { $('result').innerHTML = '<div class="chip high" style="height:auto;padding:8px 14px;white-space:normal;margin-top:14px">' + esc(e.message) + '</div>'; } finally { $('build').disabled = false; } };
+const STEPS = ['Signed by your wallet', 'Signed by the mint key', 'Sent to Solana', 'Read back from the chain'];
+const steps = (n) => { $('result').innerHTML = '<div class="steps">' + STEPS.map((s, i) => '<div class="st' + (i < n ? ' on' : i === n ? ' now' : '') + '"><i></i>' + s + '</div>').join('') + '</div>'; };
+async function launch() { const r = built, kp = mintKey; if (!r) return;
+  try { steps(0); const tx = await decodeTx(r.transaction), signed = await phantom().signTransaction(tx); steps(1);
+    if (signed.partialSign) signed.partialSign(kp); else signed.sign([kp]); const raw = signed.serialize(); steps(2);
+    const s = await api('/v1/launch/send', { mint: r.mint, transaction: toB64(raw) }); steps(3); built = null;
+    let live = null, dead = null; for (let k = 0; k < 110 && !live && !dead; k++) { await new Promise((z) => setTimeout(z, 1500)); const g = await api('/v1/launch/' + r.mint).catch(() => null); if (g && g.status === 'live') live = g; else if (g && (g.status === 'failed' || g.status === 'expired')) dead = g.status; }
+    if (dead) throw new Error(dead === 'failed' ? 'Solana rejected the transaction. Nothing was created.' : 'Solana did not confirm the transaction before it expired. Nothing was created and nothing was charged.');
+    $('action').innerHTML = '<div class="label"><h3>' + esc(r.symbol) + (live ? ' is live' : ' was sent') + '</h3><span class="chip ' + (live ? live.risk.level : 'info') + '">' + (live ? live.risk.level + ' risk' : 'confirming') + '</span></div><label class="l">Mint address</label>' + box(r.mint) + '<label class="l" style="margin-top:14px">Transaction</label>' + box(s.signature) +
+      '<div style="display:flex;gap:10px;margin-top:18px;flex-wrap:wrap"><a class="pill lt sm" href="/tokens?mint=' + r.mint + '">Read its label →</a><a class="pill dk sm" href="' + s.explorer + '" target="_blank" rel="noopener">Solscan ↗</a><a class="pill dk sm" href="https://raydium.io/liquidity/create-pool/" target="_blank" rel="noopener">Open a pool ↗</a></div>' +
+      (live ? '' : '<p class="note">Solana has the transaction. It will show under Launched as soon as the mint is read back.</p>');
+  } catch (e) { $('result').innerHTML = '<div class="chip high" style="height:auto;padding:8px 14px;white-space:normal;margin-top:14px">' + esc(e.message || 'The wallet refused') + '</div><div style="display:flex;gap:10px;margin-top:14px"><button class="pill dk sm" id="retry">Check again</button></div>'; built = null; $('retry').onclick = () => $('build').click(); } }
+
+// ---- launched here ----
+const RULE = (c) => [c.feeBps ? c.feeBps / 100 + '% fee' + (c.lockFee ? ', locked' : '') : null, c.hookProgram ? 'hook ' + short(c.hookProgram, 4) : null, c.keepMintAuthority ? 'mintable' : 'fixed supply', c.freezeAuthority ? 'freezable' : null].filter(Boolean).join(' · ');
+const ago = (t) => { const s = (Date.now() - t) / 1000; return s < 90 ? 'just now' : s < 5400 ? Math.round(s / 60) + ' min ago' : s < 129600 ? Math.round(s / 3600) + ' h ago' : Math.round(s / 86400) + ' d ago'; };
+async function launched() { try { const r = await api('/v1/launch/list?limit=50'); $('lTotal').textContent = num(r.total) + (r.total === 1 ? ' token' : ' tokens') + ' launched here and read back from the chain';
+    $('lRows').innerHTML = r.launches.map((l) => '<tr class="row" data-m="' + l.mint + '"><td><div class="tk">' + (l.icon ? '<img src="' + esc(l.icon) + '" alt="" loading="lazy" onerror="this.outerHTML=\'<i></i>\'">' : '<i></i>') + '<div><div style="font-weight:500">' + esc(l.symbol) + ' <span class="mut" style="font-weight:400">' + esc(l.name) + '</span></div><div class="mut mono" style="font-size:12px">' + short(l.mint) + '</div></div></div></td><td><span class="chip ' + (l.risk || 'info') + '">' + (l.risk || '—') + '</span></td><td class="hide dim" style="font-size:13.5px">' + esc(RULE(l.config)) + '</td><td class="hide mono mut" style="font-size:13px">' + short(l.creator) + '</td><td class="mut" style="font-size:13.5px">' + ago(l.liveAt) + '</td></tr>').join('') ||
+      '<tr><td colspan="5" class="mut" style="padding:26px">The first token launched here will appear in this list.</td></tr>'; } catch (e) { toast(e.message, true); } }
+$('lRows').addEventListener('click', (e) => { const r = e.target.closest('tr.row'); if (r) location.href = '/tokens?mint=' + r.dataset.m; });
+
+// ---- claim withheld transfer fees ----
+async function fees(mint) { $('cOut').innerHTML = '<div class="card"><span class="mut mono">reading the mint and its largest accounts…</span></div>';
+  try { const f = await api('/v1/launch/fees/' + mint), kv = (k, v) => '<div class="kv"><span>' + k + '</span><span>' + v + '</span></div>', some = Number(f.withheld.total) > 0;
+    $('cOut').innerHTML = '<div class="card" style="max-width:760px"><div class="label"><h3>' + sig(f.withheld.total, 9) + ' withheld</h3><span class="chip caution">' + f.feeBps / 100 + '% fee</span></div>' + kv('On the mint', sig(f.withheld.onMint, 9)) + kv('On holder accounts', f.withheld.onAccounts.length ? sig(f.withheld.onAccounts.reduce((s, a) => s + Number(a.amount), 0), 9) + ' across ' + f.withheld.onAccounts.length : '0') + kv('Withdraw authority', f.withdrawAuthority ? short(f.withdrawAuthority, 6) : 'none') +
+      '<p class="note">' + esc(f.scanned.note.split(' Pass `')[0]) + '</p>' + (some && f.withdrawAuthority ? '<div style="display:flex;gap:10px;margin-top:16px"><button class="pill lt" id="claim">Claim to my wallet</button></div>' : '') + '<div id="cRes"></div></div>';
+    if ($('claim')) $('claim').onclick = async () => { try { await ensureWallet(); const c = await api('/v1/launch/claim', { mint, authority: wallet }); if (!c.simulation.ok) throw new Error(c.simulation.error); toast('Confirm in Phantom'); const s = await signAndSend(c.transaction); $('cRes').innerHTML = '<label class="l" style="margin-top:16px">Transaction</label>' + box(s); } catch (e) { toast(e.message || 'Transaction refused', true); } };
+  } catch (e) { $('cOut').innerHTML = errBox(e); } }
+$('cGo').onclick = () => { const m = $('cMint').value.trim(); isMint(m) ? fees(m) : toast('Enter a token mint address', true); }; $('cMint').addEventListener('keydown', (e) => { if (e.key === 'Enter') $('cGo').click(); });
+
+label(); const route = () => { const h = location.hash.slice(1); show(['launched', 'fees'].includes(h) ? h : 'create'); }; addEventListener('hashchange', route); if (location.hash) route();
+</script></body></html>
