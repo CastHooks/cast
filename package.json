@@ -1,0 +1,22 @@
+{
+  "name": "cast",
+  "version": "0.1.0",
+  "description": "CAST: the custom hooks launchpad on Solana, and a decoder for what any Solana token can do to its holders.",
+  "type": "module",
+  "main": "server/index.js",
+  "scripts": {
+    "start": "node --disable-warning=ExperimentalWarning server/index.js",
+    "test": "node --disable-warning=ExperimentalWarning test/run.js"
+  },
+  "engines": {
+    "node": ">=22.13"
+  },
+  "license": "MIT",
+  "keywords": [
+    "solana",
+    "token-2022",
+    "transfer-hook",
+    "launchpad",
+    "mcp"
+  ]
+}
