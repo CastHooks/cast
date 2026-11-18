@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Tokens | {{NAME}}</title><meta name="description" content="Every Solana token's extensions decoded: transfer hooks, fees, permanent delegates, freeze and pause powers.">
+<link rel="icon" href="/mark.svg"><link rel="stylesheet" href="/style.css">
+<style>
+main{padding:120px 0 90px;min-height:100vh;position:relative}
+.head{display:flex;justify-content:space-between;align-items:flex-end;gap:24px;flex-wrap:wrap;margin-bottom:26px}.head h1{font:500 clamp(38px,5vw,64px)/1 var(--sans);letter-spacing:-.03em}
+.tabs{display:inline-flex;gap:4px;padding:5px;border-radius:999px;background:rgba(9,7,18,.7);border:1px solid var(--line);flex-wrap:wrap}
+.tabs button{padding:9px 20px;border-radius:999px;font:500 15px var(--sans);color:var(--lav2)}.tabs button.on{background:linear-gradient(100deg,#b98cff,#14f195);color:#07060d}
+.pane{display:none}.pane.on{display:block}
+.filters{display:flex;gap:8px;flex-wrap:wrap;padding:6px 16px 14px}.fl{height:34px;padding:0 14px;border-radius:999px;border:1px solid var(--line2);font:500 13px var(--sans);color:var(--lav2);background:rgba(9,7,18,.5)}.fl.on{background:linear-gradient(100deg,#b98cff,#14f195);color:#07060d;border-color:transparent}
+.tk{display:flex;align-items:center;gap:12px}.tk img,.tk i{width:30px;height:30px;border-radius:50%;background:rgba(170,140,255,.14);flex:none;object-fit:cover}
+.a{color:var(--lav);font-family:var(--mono);font-size:14px}.a:hover{text-decoration:underline}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:14px}.pw{display:grid;grid-template-columns:repeat(2,1fr);gap:6px}
+.bit{padding:8px 13px;border-radius:11px;border:1px solid var(--line);font:400 13.5px var(--sans);color:var(--mut)}.bit.on{color:#07060d;background:linear-gradient(100deg,#b98cff,#14f195);border-color:transparent}
+.tx{border:1px solid var(--line);border-radius:16px;padding:14px 16px;margin-top:10px;background:rgba(9,7,18,.5)}
+@media(max-width:900px){.row2,.pw{grid-template-columns:1fr}table.t .hide{display:none}}
+</style></head><body>
+<main><div class="glow" style="width:560px;height:560px;left:-200px;top:-80px;background:#9945ff;opacity:.35"></div><div class="glow" style="width:480px;height:480px;right:-180px;top:300px;background:#14f195;opacity:.14"></div>
+<div class="wrap" style="position:relative">
+  <div class="head"><div><div class="eyebrow">Token extensions on Solana</div><h1 style="margin-top:14px">Token explorer</h1></div><span class="mono mut" id="sync" style="font-size:13px"></span></div>
+  <div class="tabs" id="tabs"><button data-p="tokens" class="on">Tokens</button><button data-p="inspect">Inspect</button><button data-p="hooks">Hook programs</button><button data-p="trade">Quote &amp; swap</button></div>
+
+  <div class="pane on" id="p-tokens" style="margin-top:22px"><div class="card" style="padding:10px 10px 18px">
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 16px;flex-wrap:wrap"><span class="dim" id="tTotal">—</span><input class="inp" id="tQ" placeholder="search symbol, name or mint" style="max-width:340px;font-family:var(--sans)"></div>
+    <div class="filters" id="tF"></div>
+    <table class="t"><thead><tr><th>Token</th><th>Risk</th><th class="hide">Powers</th><th>Liquidity</th><th class="hide">Program</th></tr></thead><tbody id="tRows"></tbody></table>
+    <div style="display:flex;gap:10px;align-items:center;justify-content:flex-end;margin-top:16px;padding:0 16px;font:400 13px var(--mono);color:var(--mut)"><span id="tPage"></span><button class="pill dk sm" id="tPrev">←</button><button class="pill dk sm" id="tNext">→</button></div></div></div>
+
+  <div class="pane" id="p-inspect" style="margin-top:22px"><div class="field" style="max-width:760px"><input id="iMint" placeholder="token mint address" spellcheck="false" autocomplete="off"><button class="pill lt sm" id="iGo">Inspect →</button></div><div id="iOut" style="margin-top:20px"></div></div>
+
+  <div class="pane" id="p-hooks" style="margin-top:22px"><div class="card" style="padding:10px 10px 18px"><div class="dim" style="padding:12px 16px" id="hTotal">—</div>
+    <table class="t"><thead><tr><th>Hook program</th><th>Tokens</th><th class="hide">Largest</th><th>Combined market cap</th></tr></thead><tbody id="hRows"></tbody></table></div><div id="hOut" style="margin-top:18px"></div></div>
+
+  <div class="pane" id="p-trade" style="margin-top:22px"><div class="grid2" style="align-items:start">
+    <div class="card"><h3>Quote with the warnings attached</h3><p style="margin-bottom:20px">Routed by Jupiter. {{NAME}} reads both tokens first and tells you what each one can do before you sign.</p>
+      <label class="l">You pay (mint)</label><input class="inp" id="qIn" value="So11111111111111111111111111111111111111112" spellcheck="false">
+      <label class="l" style="margin-top:14px">You receive (mint)</label><input class="inp" id="qOut" placeholder="token mint" spellcheck="false">
+      <div class="row2" style="margin-top:14px"><div><label class="l">Amount</label><input class="inp" id="qAmt" value="1"></div><div><label class="l">Slippage (bps)</label><input class="inp" id="qSlip" value="50"></div></div>
+      <div style="display:flex;gap:10px;margin-top:20px;flex-wrap:wrap"><button class="pill lt" id="qGo">Get quote →</button><button class="pill dk" id="qWallet">Connect Phantom</button></div></div>
+    <div id="qOutBox"><div class="card"><p>The quote appears here with every power the tokens hold over you. The swap is built unsigned: Phantom signs it, and nothing here ever holds funds.</p></div></div></div></div>
+</div></main>
+<script type="module">
+import { nav, foot, api, num, sig, $, esc, short, toast, copy, connect, signAndSend } from '/common.js';
+import { POWERS, isMint } from '/lib/ext.js';
+nav('/tokens'); foot();
+const money = (n) => (n == null ? '—' : n >= 1e9 ? '$' + (n / 1e9).toFixed(2) + 'B' : n >= 1e6 ? '$' + (n / 1e6).toFixed(1) + 'M' : n >= 1e3 ? '$' + (n / 1e3).toFixed(1) + 'K' : '$' + Math.round(n));
+const LABEL = Object.fromEntries(POWERS.map((p) => [p.key, p.label])), LEVEL = Object.fromEntries(POWERS.map((p) => [p.key, p.level]));
+const errBox = (e) => '<div class="card"><span class="chip high">' + esc(e.code || 'error') + '</span><p style="margin-top:12px">' + esc(e.message) + '</p></div>';
+const icon = (t) => (t.icon ? '<img src="' + esc(t.icon) + '" alt="" loading="lazy" onerror="this.outerHTML=\'<i></i>\'">' : '<i></i>');
+const show = (p) => { document.querySelectorAll('#tabs button').forEach((b) => b.classList.toggle('on', b.dataset.p === p)); document.querySelectorAll('.pane').forEach((x) => x.classList.toggle('on', x.id === 'p-' + p)); };
+$('tabs').addEventListener('click', (e) => { const p = e.target.dataset.p; if (!p) return; show(p); history.replaceState(null, '', '/tokens' + (p === 'tokens' ? '' : '#' + p)); if (p === 'hooks') hooks(); });
+
+// ---- token list ----
+let power = '', off = 0, text = ''; const LIM = 20, FILTERS = [['', 'All'], ['transferHook', 'Transfer hook'], ['transferFee', 'Transfer fee'], ['permanentDelegate', 'Permanent delegate'], ['pausable', 'Pausable'], ['frozenByDefault', 'Frozen by default'], ['nonTransferable', 'Non-transferable'], ['freezeAuthority', 'Freeze authority'], ['mintAuthority', 'Mint authority']];
+$('tF').innerHTML = FILTERS.map(([k, l]) => '<button class="fl' + (k === power ? ' on' : '') + '" data-k="' + k + '">' + l + '</button>').join('');
+async function tokens() { const q = new URLSearchParams({ limit: LIM, offset: off, sort: 'liquidity' }); if (power) q.set('power', power); if (text) q.set('q', text);
+  try { const r = await api('/v1/tokens?' + q); $('tTotal').textContent = num(r.total) + ' tokens' + (power ? ' with ' + LABEL[power].toLowerCase() : ' decoded'); $('tPage').textContent = r.tokens.length ? (off + 1) + '–' + (off + r.tokens.length) + ' of ' + num(r.total) : '';
+    $('tRows').innerHTML = r.tokens.map((t) => '<tr class="row" data-m="' + t.mint + '"><td><div class="tk">' + icon(t) + '<div><div style="font-weight:500">' + esc(t.symbol || '?') + (t.verified ? ' <span class="mut" style="font-size:12px">✓</span>' : '') + '</div><div class="mut mono" style="font-size:12px">' + short(t.mint) + '</div></div></div></td><td><span class="chip ' + t.risk + '">' + t.risk + '</span></td><td class="hide dim" style="font-size:13.5px">' + (t.powers.filter((k) => LEVEL[k] !== 'info').map((k) => LABEL[k]).join(', ') || '<span class="mut">none over holders</span>') + '</td><td class="mono">' + money(t.liquidity) + '</td><td class="hide mut" style="font-size:13px">' + t.program + '</td></tr>').join('') || '<tr><td colspan="5" class="mut" style="padding:26px">Nothing matches yet. The index is still decoding tokens from the chain.</td></tr>'; } catch (e) { toast(e.message, true); } }
+$('tF').addEventListener('click', (e) => { const b = e.target.closest('.fl'); if (!b) return; power = b.dataset.k; off = 0; $('tF').querySelectorAll('.fl').forEach((x) => x.classList.toggle('on', x === b)); tokens(); });
+let tq; $('tQ').addEventListener('input', () => { clearTimeout(tq); tq = setTimeout(() => { text = $('tQ').value.trim(); off = 0; tokens(); }, 250); });
+$('tRows').addEventListener('click', (e) => { const r = e.target.closest('tr.row'); if (r) inspect(r.dataset.m); });
+$('tPrev').onclick = () => { off = Math.max(0, off - LIM); tokens(); }; $('tNext').onclick = () => { off += LIM; tokens(); };
+
+// ---- one token ----
+async function inspect(mint) { show('inspect'); $('iMint').value = mint; history.replaceState(null, '', '/tokens?mint=' + mint); $('iOut').innerHTML = '<div class="card"><span class="mut mono">reading the mint account…</span></div>';
+  try { const t = await api('/v1/tokens/' + mint + '/check'), d = t.details, kv = (k, v) => '<div class="kv"><span>' + k + '</span><span>' + v + '</span></div>', full = await api('/v1/tokens/' + mint);
+    $('iOut').innerHTML = '<div class="grid2" style="align-items:start"><div class="card"><div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:14px"><h3 style="margin:0">' + esc(full.symbol || '?') + ' <span class="mut" style="font-weight:400">' + esc(full.name || '') + '</span></h3><span class="chip ' + t.risk.level + '">' + t.risk.level + ' risk</span></div><div class="pw">' + POWERS.map((p) => '<div class="bit' + (t.powers.includes(p.key) ? ' on' : '') + '">' + p.label + '</div>').join('') + '</div>' +
+      '<div style="margin-top:20px;display:grid;gap:10px">' + (full.capabilities.map((c) => '<div style="display:flex;gap:12px;align-items:flex-start"><span class="chip ' + c.level + '">' + c.level + '</span><span class="dim" style="font-size:15px"><b style="color:var(--ink);font-weight:500">' + esc(c.label) + '.</b> ' + esc(c.note) + '</span></div>').join('') || '<span class="chip ok">no powers over holders</span>') + '</div></div>' +
+      '<div style="display:grid;gap:16px"><div class="card"><h3>Mint</h3>' + kv('Address', '<a class="a" href="' + full.explorer + '" target="_blank" rel="noopener">' + short(mint, 6) + ' ↗</a>') + kv('Program', full.program) + kv('Supply', sig(full.supply, 8)) + kv('Market cap', money(full.marketCap)) + kv('Holders', full.holders != null ? num(full.holders) : '—') +
+        (d.transferFee ? kv('Transfer fee', d.transferFee.percent + '%' + (d.transferFee.canChange ? ' · can change' : ' · fixed')) : '') + (d.permanentDelegate ? kv('Permanent delegate', short(d.permanentDelegate.delegate, 6)) : '') + (d.freezeAuthority ? kv('Freeze authority', short(d.freezeAuthority.authority, 6)) : '') + (d.mintAuthority ? kv('Mint authority', short(d.mintAuthority.authority, 6)) : '') + (d.transferHookSlot ? kv('Hook slot', 'empty · ' + short(d.transferHookSlot.authority, 6) + ' can attach one') : '') +
+        '<div style="margin-top:14px"><button class="pill dk sm" data-buy="' + mint + '">Quote a buy →</button></div></div>' +
+      (t.hookProgram ? '<div class="card"><h3>Transfer hook program</h3>' + kv('Program', '<a class="a" href="#" data-hook="' + t.hookProgram.address + '">' + short(t.hookProgram.address, 6) + '</a>') + kv('Deployed', t.hookProgram.deployed ? 'yes' : 'no') + kv('Upgradeable', t.hookProgram.upgradeable ? 'yes · ' + short(t.hookProgram.upgradeAuthority, 6) : 'no') + '</div>' : '') + '</div></div>';
+  } catch (e) { $('iOut').innerHTML = errBox(e); } }
+$('iGo').onclick = () => { const m = $('iMint').value.trim(); isMint(m) ? inspect(m) : toast('Enter a token mint address', true); }; $('iMint').addEventListener('keydown', (e) => { if (e.key === 'Enter') $('iGo').click(); });
+
+// ---- hook programs ----
+async function hooks() { try { const r = await api('/v1/hooks?limit=50'); $('hTotal').textContent = num(r.total) + ' transfer-hook programs run inside indexed tokens';
+    $('hRows').innerHTML = r.programs.map((p) => '<tr class="row" data-hook="' + p.program + '"><td class="mono">' + short(p.program, 8) + '</td><td class="mono">' + num(p.tokens) + '</td><td class="hide">' + esc(p.example || '?') + '</td><td class="mono">' + money(p.marketCap) + '</td></tr>').join('') || '<tr><td colspan="4" class="mut" style="padding:26px">Hook programs appear here as tokens are decoded.</td></tr>'; } catch (e) { toast(e.message, true); } }
+async function hook(program) { show('hooks'); if (!$('hRows').children.length) hooks(); $('hOut').innerHTML = '<div class="card"><span class="mut mono">reading the program…</span></div>';
+  try { const h = await api('/v1/hooks/' + program); $('hOut').innerHTML = '<div class="card"><h3>' + short(h.program, 8) + '</h3><div class="kv"><span>Program</span><span><a class="a" href="' + h.explorer + '" target="_blank" rel="noopener">' + h.program + ' ↗</a></span></div><div class="kv"><span>Deployed</span><span>' + (h.deployed ? 'yes' : 'no') + '</span></div><div class="kv"><span>Upgrade authority</span><span>' + (h.upgradeAuthority || 'none: the code is final') + '</span></div><div class="kv"><span>Tokens running it</span><span>' + num(h.tokens.total) + '</span></div>' + h.tokens.top.slice(0, 8).map((t) => '<div class="kv"><span>' + esc(t.symbol || '?') + ' · ' + money(t.marketCap) + '</span><span><a class="a" href="#" data-m="' + t.mint + '">' + short(t.mint, 6) + '</a></span></div>').join('') +
+      '<div style="margin-top:14px;display:grid;gap:8px">' + (h.warnings.length ? h.warnings.map((w) => '<div class="chip high" style="height:auto;padding:8px 14px;white-space:normal">' + esc(w) + '</div>').join('') : '<span class="chip ok">no program-level warnings</span>') + '</div></div>'; } catch (e) { $('hOut').innerHTML = errBox(e); } }
+document.addEventListener('click', (e) => { const h = e.target.closest('[data-hook]'); if (h) { e.preventDefault(); hook(h.dataset.hook); return; } const m = e.target.closest('a[data-m]'); if (m) { e.preventDefault(); inspect(m.dataset.m); return; } const b = e.target.closest('[data-buy]'); if (b) { $('qOut').value = b.dataset.buy; show('trade'); $('qGo').click(); } });
+
+// ---- quote and swap: Phantom signs, nothing here holds funds ----
+let wallet = null, lastBody = null;
+$('qWallet').onclick = async () => { try { wallet = await connect(); $('qWallet').textContent = short(wallet); toast('Connected ' + short(wallet)); } catch (e) { toast(e.message || 'Wallet refused', true); } };
+$('qGo').onclick = async () => { const body = { inputMint: $('qIn').value.trim(), outputMint: $('qOut').value.trim(), amount: $('qAmt').value.trim(), slippageBps: Number($('qSlip').value) || 50 }; $('qOutBox').innerHTML = '<div class="card"><span class="mut mono">reading both tokens and routing…</span></div>';
+  try { const q = await api('/v1/quote', body); lastBody = body; const warn = [...q.warnings.input, ...q.warnings.output];
+    $('qOutBox').innerHTML = '<div class="card"><h3>' + sig(q.amountOut, 9) + ' out</h3><div class="kv"><span>You pay</span><span>' + sig(q.amountIn, 9) + '</span></div><div class="kv"><span>Minimum out</span><span>' + sig(q.minimumOut, 9) + '</span></div><div class="kv"><span>Price impact</span><span>' + q.priceImpactPct + '%</span></div><div class="kv"><span>Route</span><span>' + esc(q.route.join(' → ') || '—') + '</span></div>' +
+      '<div style="margin-top:14px;display:grid;gap:8px">' + (warn.length ? warn.map((w) => '<div class="chip warning" style="height:auto;padding:8px 14px;white-space:normal">' + esc(w) + '</div>').join('') : '<span class="chip ok">neither token holds a power over you</span>') + '</div><div style="display:flex;gap:10px;margin-top:16px;flex-wrap:wrap"><button class="pill lt" id="qSend">Sign &amp; send with Phantom</button></div></div>';
+    $('qSend').onclick = async () => { if (!wallet) return toast('Connect Phantom first', true); try { const s = await api('/v1/swap/build', { ...lastBody, user: wallet }); toast('Confirm in Phantom');
+        toast('Sent: ' + short(await signAndSend(s.transaction), 6)); } catch (x) { toast(x.message || 'Transaction refused', true); } };
+  } catch (e) { $('qOutBox').innerHTML = errBox(e); } };
+
+api('/v1/census').then((c) => { $('sync').textContent = (c.decoded < c.tokens ? 'decoding · ' : 'live · ') + num(c.decoded) + ' of ' + num(c.tokens) + ' tokens · ' + num(c.hookPrograms) + ' hook programs'; }).catch(() => {});
+tokens(); const P = new URLSearchParams(location.search), qm = P.get('mint'); if (qm && isMint(qm)) inspect(qm); else if (location.hash === '#hooks') { show('hooks'); hooks(); } else if (['inspect', 'trade'].includes(location.hash.slice(1))) show(location.hash.slice(1));
+</script></body></html>
