@@ -1,6 +1,6 @@
 # CAST
 
-[![ci](https://github.com/CastHooks/cast/actions/workflows/ci.yml/badge.svg)](https://github.com/CastHooks/cast/actions/workflows/ci.yml) [![license](https://img.shields.io/badge/license-MIT-9945ff)](LICENSE) [![node](https://img.shields.io/badge/node-%E2%89%A5%2022.13-9945ff)](.node-version) [![dependencies](https://img.shields.io/badge/dependencies-0-9945ff)](package.json)
+[![license](https://img.shields.io/badge/license-MIT-9945ff)](LICENSE) [![node](https://img.shields.io/badge/node-%E2%89%A5%2022.13-9945ff)](.node-version) [![dependencies](https://img.shields.io/badge/dependencies-0-9945ff)](package.json)
 
 **[casthooks.xyz](https://casthooks.xyz)** · [Docs](https://casthooks.xyz/docs) · [X](https://x.com/CastHooksPad) · [Changelog](CHANGELOG.md) · [Security](SECURITY.md)
 
