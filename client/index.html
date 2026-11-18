@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>{{NAME}} | Every Solana token extension, decoded</title>
+<meta name="description" content="{{NAME}} reads what every Solana token can do to its holders: transfer hooks, transfer fees, permanent delegates, freeze and pause powers. One API, one explorer, tools for agents.">
+<meta property="og:title" content="{{NAME}} | Know what a token can do before you hold it"><meta property="og:description" content="Token-2022 extensions decoded: transfer hooks, fees, delegates, freeze and pause powers. One API on Solana."><meta property="og:image" content="{{ORIGIN}}/og.png"><meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/mark.svg"><link rel="stylesheet" href="/style.css">
+<style>
+.hero{position:relative;height:100vh;min-height:640px;overflow:hidden}
+.hero .sky{position:absolute;inset:0;background:radial-gradient(60% 55% at 50% 42%,rgba(153,69,255,.34),transparent 70%),radial-gradient(42% 30% at 50% 108%,rgba(20,241,149,.3),rgba(153,69,255,.2) 45%,transparent 75%)}
+.hero .word{position:absolute;left:50%;top:47%;transform:translate(-50%,-50%);z-index:1;font:700 36vw/0.8 var(--sans);letter-spacing:-.045em;white-space:nowrap;background:linear-gradient(180deg,#e7dcff 10%,#8f76d6 68%,#3a2a66);-webkit-background-clip:text;background-clip:text;color:transparent;user-select:none;will-change:transform}
+#gl{position:absolute;inset:0;z-index:2;width:100%;height:100%}
+.hero .ui{position:absolute;z-index:3;left:0;right:0;bottom:104px}.hero .ui .wrap{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;flex-wrap:wrap}
+.hero .tag{font:300 clamp(20px,2vw,27px) var(--sans);color:#b8b0dc;max-width:420px;line-height:1.3}
+.hero .btns{display:flex;gap:12px}.hero .btns .pill{height:58px;padding:0 30px;font-size:18px}
+.scrollcue{position:absolute;left:50%;bottom:26px;transform:translateX(-50%);z-index:3;text-align:center;font-size:13px;color:var(--mut)}
+.scrollcue i{display:block;width:22px;height:36px;border:1.5px solid var(--lav2);border-radius:12px;margin:0 auto 8px;position:relative}.scrollcue i:after{content:'';position:absolute;left:50%;top:7px;width:3px;height:7px;margin-left:-1.5px;border-radius:2px;background:var(--lav);animation:cue 1.8s infinite}
+@keyframes cue{0%{opacity:0;transform:translateY(0)}40%{opacity:1}100%{opacity:0;transform:translateY(12px)}}
+#prog{position:fixed;right:26px;bottom:24px;z-index:40;width:54px;height:54px;border-radius:50%;display:grid;place-items:center;font:500 13px var(--mono);color:var(--lav);background:conic-gradient(#14f195 calc(var(--p,0)*1%),rgba(170,140,255,.16) 0)}
+#prog:before{content:'';position:absolute;inset:2px;border-radius:50%;background:var(--bg2)}#prog span{position:relative}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:64px}
+.stats .n{font:500 clamp(40px,5vw,66px)/1 var(--sans);letter-spacing:-.03em;background:linear-gradient(180deg,#fff,#b9a2ff);-webkit-background-clip:text;background-clip:text;color:transparent}
+.stats .k{margin-top:12px;font:500 12px var(--mono);letter-spacing:.18em;text-transform:uppercase;color:var(--mut)}
+.flags{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.flag{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:11px 16px;border-radius:14px;border:1px solid var(--line);background:rgba(9,7,18,.5);font:400 14px var(--sans);color:var(--dim);cursor:pointer;transition:.15s;text-align:left}
+.flag b{font:400 11px var(--mono);color:var(--mut);text-transform:uppercase;letter-spacing:.1em}.flag:hover{border-color:var(--line2)}
+.flag.on{color:#07060d;background:linear-gradient(100deg,#b98cff,#14f195);border-color:transparent}.flag.on b{color:#2a1f4d}
+.tabs{display:inline-flex;gap:4px;padding:5px;border-radius:999px;background:rgba(9,7,18,.7);border:1px solid var(--line);margin-bottom:14px}
+.tabs button{padding:8px 18px;border-radius:999px;font:500 14px var(--sans);color:var(--lav2)}.tabs button.on{background:rgba(170,140,255,.2);color:#fff}
+.bar{display:grid;grid-template-columns:230px 1fr 90px;gap:16px;align-items:center;padding:8px 0;font:400 15px var(--sans);color:var(--dim)}
+.bar i{display:block;height:10px;border-radius:999px;background:var(--iri);min-width:2px}.bar span:last-child{text-align:right;color:var(--ink);font-family:var(--mono)}.bar .tr{background:rgba(170,140,255,.1);border-radius:999px;overflow:hidden}
+.prod{min-height:200px;display:flex;flex-direction:column}.prod a{margin-top:auto;padding-top:18px;color:var(--lav);font-size:15px}
+.prod .ic{width:44px;height:44px;border-radius:14px;display:grid;place-items:center;margin-bottom:18px;background:rgba(170,140,255,.12);border:1px solid var(--line2);font:500 13px var(--mono);color:var(--lav)}
+@media(max-width:900px){.hero .word{font-size:50vw;top:40%}.hero .ui{bottom:120px}.hero .btns .pill{height:52px;padding:0 22px;font-size:16px}.stats{grid-template-columns:1fr;gap:34px}.flags{grid-template-columns:1fr}.bar{grid-template-columns:130px 1fr 60px;font-size:13px}}
+</style></head><body>
+
+<section class="hero" id="top"><div class="sky"></div><div class="word" id="word">CAST</div><canvas id="gl"></canvas>
+  <div class="ui"><div class="wrap"><p class="tag">Know what a token can do before you hold it.</p><div class="btns"><a class="pill lt" href="/tokens">Explore tokens</a><a class="pill dk" href="/docs">Read the docs</a></div></div></div>
+  <div class="scrollcue"><i></i>Scroll to explore</div></section>
+<div id="prog"><span>0%</span></div>
+
+<section class="blk center"><div class="glow" style="width:520px;height:520px;left:-160px;top:40px;background:#9945ff"></div><div class="wrap">
+  <div class="eyebrow">Token extensions on Solana</div>
+  <h2 class="big rv" style="margin:22px auto 26px;max-width:1000px">Every token on Solana can now <em>carry its own rules.</em></h2>
+  <p class="lead rv">Token-2022 lets a mint run code on every transfer, take a fee, freeze you, pause everything, or move your balance. {{NAME}} reads all of it, for every token, through one API.</p>
+  <div class="stats"><div><div class="n" id="sTok">—</div><div class="k">tokens decoded</div></div><div><div class="n" id="s22">—</div><div class="k">on token-2022</div></div><div><div class="n" id="sHigh">—</div><div class="k">can move or block your tokens</div></div></div>
+  <div class="mut mono" style="margin-top:26px;font-size:13px" id="sSync"></div>
+</div></section>
+
+<section class="blk" id="decoder"><div class="wrap"><div class="grid2" style="gap:48px;align-items:start">
+  <div><div class="eyebrow">The powers</div><h2 class="big rv" style="margin:20px 0 22px">A token is not <em>just a balance.</em></h2>
+    <p class="lead rv">These are the powers a Solana mint can hold over the people who own it. Toggle them to see what each one means for a holder, and how {{NAME}} rates the combination.</p>
+    <p class="mut" style="margin-top:14px;font-size:14px">Runs in your browser. The explorer reads the real powers of every live token.</p>
+    <div style="margin-top:28px;display:flex;gap:12px;align-items:center;flex-wrap:wrap"><a class="pill lt" href="/tokens">Check a live token →</a><span class="chip" id="dRisk">low risk</span></div>
+    <div id="dNotes" style="margin-top:24px;display:grid;gap:10px"></div></div>
+  <div class="card"><div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:16px"><span class="mono" style="font-size:15px">powers <b id="dHex" style="color:var(--lav);font-weight:500">0x0000</b></span><span class="mut mono" style="font-size:13px" id="dCount"></span></div><div class="flags" id="dFlags"></div></div>
+</div></div></section>
+
+<section class="blk" id="products"><div class="glow" style="width:560px;height:560px;right:-200px;top:0;background:#14f195;opacity:.16"></div><div class="wrap">
+  <div class="center"><div class="eyebrow">Products</div><h2 class="big rv" style="margin:20px auto 60px;max-width:900px">Everything you need to build on <em>token extensions.</em></h2></div>
+  <div class="grid3" id="prods"></div></div></section>
+
+<section class="blk" id="launch"><div class="glow" style="width:520px;height:520px;left:-180px;top:40px;background:#9945ff;opacity:.22"></div><div class="wrap"><div class="grid2" style="gap:48px;align-items:center">
+  <div><div class="eyebrow">Launchpad</div><h2 class="big rv" style="margin:20px 0 22px">Launch with <em>the label on.</em></h2>
+    <p class="lead rv">Set a transfer fee, attach a transfer hook, write the metadata into the mint and receive the whole supply, in one transaction. You read the risk label your token will carry before you sign.</p>
+    <div style="margin-top:30px;display:flex;gap:10px;flex-wrap:wrap"><a class="pill lt" href="/launch">Launch a token →</a><a class="pill dk" href="/docs#launch">How it works</a></div></div>
+  <div class="card"><div class="kv"><span>Transactions</span><span>1</span></div><div class="kv"><span>Signers</span><span>your wallet + the mint key</span></div><div class="kv"><span>Program</span><span>Token-2022</span></div><div class="kv"><span>Launch fee</span><span>0</span></div><div class="kv"><span>Creator fee</span><span>0 to 10% per transfer, lockable</span></div><div class="kv"><span>Supply</span><span>fixed in the same transaction</span></div></div>
+</div></div></section>
+
+<section class="blk"><div class="wrap"><div class="grid2" style="gap:48px;align-items:center">
+  <div><div class="eyebrow">Developer first</div><h2 class="big rv" style="margin:20px 0 22px">Every token.<br><em>One API.</em></h2>
+    <p class="lead rv">Decode a mint, list every token that runs a given transfer hook, check a token before a swap, and build the swap unsigned. Open, keyless, plain JSON.</p>
+    <div style="margin-top:30px"><a class="pill lt" href="/docs">Read the docs →</a></div></div>
+  <div><div class="tabs" id="cTabs"><button class="on" data-t="curl">cURL</button><button data-t="js">JavaScript</button><button data-t="mcp">MCP</button></div><pre class="code" id="cCode"></pre></div>
+</div></div></section>
+
+<section class="blk" id="meta"><div class="wrap"><div class="center"><div class="eyebrow">The extensions meta, measured</div><h2 class="big rv" style="margin:20px auto 22px;max-width:960px">What Solana's tokens <em>are allowed to do.</em></h2>
+  <p class="lead rv">Counted from the index: how many decoded tokens hold each power.</p></div>
+  <div class="card" style="margin-top:50px"><div id="census"><div class="mut mono" style="font-size:14px">reading the index…</div></div></div></div></section>
+
+<section class="blk" id="token"><div class="glow" style="width:520px;height:520px;left:30%;top:60px;background:#9945ff;opacity:.25"></div><div class="wrap"><div class="grid2" style="gap:48px;align-items:center">
+  <div><div class="eyebrow">{{TICKER}}</div><h2 class="big rv" style="margin:20px 0 22px">The native token <em>of {{NAME}}.</em></h2>
+    <p class="lead rv">{{TICKER}} lives on Solana, next to the tokens it reads. The API, the explorer and the agent tools are open to everyone.</p></div>
+  <div class="card"><div class="kv"><span id="tK">Status</span><span id="tV">Launching on Solana</span></div><div class="kv"><span>Chain</span><span>Solana</span></div><div class="kv"><span>Program</span><span>SPL Token</span></div></div>
+</div></div></section>
+
+<section class="blk center"><div class="wrap"><div class="eyebrow">Token extensions, decoded</div><h2 class="big rv" style="margin:20px auto 34px">Read the token.<br><em>Then cast.</em></h2><a class="pill lt" href="/tokens" style="height:58px;padding:0 34px;font-size:18px">Explore tokens →</a></div></section>
+
+<script type="module">
+import { nav, foot, reveal, api, num, $, esc, short } from '/common.js';
+import { POWERS, POWER_BITS, describe } from '/lib/ext.js';
+nav('/'); foot(); reveal();
+const prog = $('prog'), word = $('word');
+addEventListener('scroll', () => { const p = Math.round((scrollY / Math.max(1, document.documentElement.scrollHeight - innerHeight)) * 100); prog.style.setProperty('--p', p); prog.firstChild.textContent = p + '%'; word.style.transform = 'translate(calc(-50% - ' + scrollY * 0.25 + 'px),-50%)'; }, { passive: true });
+
+// ---- decoder: pure, in the browser ----
+let flags = POWER_BITS.transferHook | POWER_BITS.transferFee | POWER_BITS.freezeAuthority; const box = $('dFlags');
+box.innerHTML = POWERS.map((p) => '<button class="flag" data-k="' + p.key + '">' + esc(p.label) + '<b>' + p.level + '</b></button>').join('');
+function paint() { const d = describe(flags, flags & POWER_BITS.transferFee ? { transferFee: { bps: 100, percent: 1, canChange: true } } : {}); $('dHex').textContent = '0x' + flags.toString(16).padStart(4, '0'); $('dCount').textContent = d.powers.length + ' of ' + POWERS.length + ' held';
+  box.querySelectorAll('.flag').forEach((b) => b.classList.toggle('on', !!(flags & POWER_BITS[b.dataset.k]))); $('dRisk').textContent = d.risk.level + ' risk'; $('dRisk').className = 'chip ' + d.risk.level;
+  $('dNotes').innerHTML = d.capabilities.map((c) => '<div style="display:flex;gap:12px;align-items:flex-start"><span class="chip ' + c.level + '">' + c.level + '</span><span class="dim" style="font-size:15.5px"><b style="color:var(--ink);font-weight:500">' + esc(c.label) + '.</b> ' + esc(c.note) + '</span></div>').join('') || '<span class="mut">A plain token: nobody can move it, freeze it, tax it or print more.</span>'; }
+box.addEventListener('click', (e) => { const b = e.target.closest('.flag'); if (!b) return; flags ^= POWER_BITS[b.dataset.k]; paint(); }); paint();
+
+// ---- live numbers + census ----
+const count = (el, to) => { const from = Number(el.dataset.v || 0), t0 = performance.now(); el.dataset.v = to; if (document.hidden || from === to) { el.textContent = num(to); return; } const f = (t) => { const k = Math.min(1, (t - t0) / 900), e = 1 - Math.pow(1 - k, 3); el.textContent = num(Math.round(from + (to - from) * e)); if (k < 1) requestAnimationFrame(f); }; requestAnimationFrame(f); };
+async function stats() { try { const c = await api('/v1/census');
+  const anyHigh = Math.max(c.byPower.permanentDelegate.tokens, c.byPower.pausable.tokens, c.byPower.transferHook.tokens, c.byPower.frozenByDefault.tokens);
+  count($('sTok'), c.decoded); count($('s22'), c.token2022); count($('sHigh'), anyHigh); $('sSync').textContent = c.decoded < c.tokens ? 'decoding · ' + num(c.decoded) + ' of ' + num(c.tokens) + ' tokens read from the chain' : 'live · ' + num(c.tokens) + ' tokens indexed · ' + num(c.hookPrograms) + ' transfer-hook programs';
+  const rows = POWERS.map((p) => [p, c.byPower[p.key]]).filter(([, v]) => v), max = Math.max(...rows.map(([, v]) => v.tokens), 1);
+  $('census').innerHTML = rows.map(([p, v]) => '<div class="bar"><span>' + esc(p.label) + '</span><span class="tr"><i style="width:' + (v.tokens / max) * 100 + '%"></i></span><span>' + num(v.tokens) + '</span></div>').join('') +
+    '<div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:22px"><span class="chip warning">' + num(c.byPower.permanentDelegate.tokens) + ' tokens have a permanent delegate</span><span class="chip warning">' + num(c.byPower.pausable.tokens) + ' can be paused</span><span class="chip caution">' + num(c.byPower.freezeAuthority.tokens) + ' can freeze a holder</span></div>'; } catch (e) {} }
+stats(); setInterval(stats, 8000);
+
+const P = [['DEC', 'Decode API', 'Any mint in, every power out: transfer hook, fee, delegate, freeze, pause, mint. Read straight from the account.', 'decode'], ['IDX', 'Token index', 'Thousands of Solana tokens with their extensions decoded, filterable by power and ranked by market cap.', 'tokens'], ['HK', 'Hook programs', 'Every transfer-hook program in the index, who can upgrade it, and the tokens that run it.', 'hooks'],
+  ['CHK', 'Token check', 'One call before a buy: risk level, plain-English reasons, the hook program, and a live quote.', 'check'], ['TX', 'Quote & swap', 'Jupiter-routed quotes with extension warnings attached, and unsigned swaps your wallet signs.', 'swap'], ['MCP', 'Agent tools', 'Thirteen MCP tools so Cursor, Claude Code and any agent can read a token before touching it, or launch one.', 'agents']];
+$('prods').innerHTML = P.map(([i, t, d, h]) => '<div class="card prod"><div class="ic">' + i + '</div><h3>' + t + '</h3><p>' + d + '</p><a href="/docs#' + h + '">Learn more →</a></div>').join('');
+const O = location.origin, CODE = {
+  curl: `<span class="c"># What can this token do to its holders?</span>\ncurl ${O}/v1/tokens/&lt;mint&gt;\n\n<span class="c"># Every token that runs a transfer hook</span>\ncurl <span class="s">"${O}/v1/tokens?power=transferHook&sort=mcap"</span>\n\n<span class="c"># Check before buying 1 SOL of it</span>\ncurl <span class="s">"${O}/v1/tokens/&lt;mint&gt;/check?amount=1"</span>`,
+  js: `<span class="k">const</span> BASE = <span class="s">"${O}/v1"</span>\n\n<span class="k">const</span> token = <span class="k">await</span> (<span class="k">await</span> fetch(BASE + <span class="s">"/tokens/"</span> + mint)).json()\ntoken.risk.level     <span class="c">// "high"</span>\ntoken.powers         <span class="c">// ["permanentDelegate", "transferFee", ...]</span>\n\n<span class="c">// Build the swap unsigned; the wallet signs it</span>\n<span class="k">const</span> swap = <span class="k">await</span> (<span class="k">await</span> fetch(BASE + <span class="s">"/swap/build"</span>, {\n  method: <span class="s">"POST"</span>,\n  body: JSON.stringify({ inputMint: SOL, outputMint: mint, amount: <span class="s">"1"</span>, user })\n})).json()`,
+  mcp: `<span class="c"># Claude Code</span>\nclaude mcp add --transport http cast ${O}/mcp\n\n<span class="c"># Cursor: .cursor/mcp.json</span>\n{ <span class="s">"mcpServers"</span>: { <span class="s">"cast"</span>: { <span class="s">"url"</span>: <span class="s">"${O}/mcp"</span> } } }\n\n<span class="c"># 13 tools: decode_token, check_token, list_tokens,\n# list_hook_programs, inspect_hook_program, quote, build_swap,\n# list_powers, get_stats, build_launch, list_launches,\n# get_token_fees, build_fee_claim</span>`,
+};
+const setCode = (t) => { $('cCode').innerHTML = CODE[t]; document.querySelectorAll('#cTabs button').forEach((b) => b.classList.toggle('on', b.dataset.t === t)); };
+$('cTabs').addEventListener('click', (e) => { if (e.target.dataset.t) setCode(e.target.dataset.t); }); setCode('curl');
+fetch('/v1/config').then((r) => r.json()).then((c) => { if (c.token) { $('tK').textContent = 'Mint'; $('tV').innerHTML = '<a href="https://solscan.io/token/' + c.token + '" target="_blank" rel="noopener">' + short(c.token, 6) + '</a>'; } }).catch(() => {});
+</script>
+<script type="module">
+// ---- the hero object: a chrome hook in Solana's colours ----
+import * as THREE from 'https://cdnjs.cloudflare.com/ajax/libs/three.js/0.160.0/three.module.min.js';
+const cv = document.getElementById('gl'), R = new THREE.WebGLRenderer({ canvas: cv, antialias: true, alpha: true }); R.setPixelRatio(Math.min(2, devicePixelRatio)); R.toneMapping = THREE.ACESFilmicToneMapping; R.toneMappingExposure = 1.15;
+const scene = new THREE.Scene(), cam = new THREE.PerspectiveCamera(32, 1, 0.1, 50); cam.position.set(0, 0, 9.2);
+const ec = document.createElement('canvas'); ec.width = 1024; ec.height = 512; const g = ec.getContext('2d'), sky = g.createLinearGradient(0, 0, 0, 512); sky.addColorStop(0, '#7a4fd6'); sky.addColorStop(0.42, '#17102e'); sky.addColorStop(1, '#06050c'); g.fillStyle = sky; g.fillRect(0, 0, 1024, 512);
+const strip = (x, y, w, h, c, blur) => { g.save(); g.filter = 'blur(' + blur + 'px)'; g.fillStyle = c; g.fillRect(x, y, w, h); g.restore(); };
+strip(60, 30, 420, 110, '#ffffff', 22); strip(560, 50, 380, 80, '#eee6ff', 20); strip(440, 150, 160, 60, '#ffffff', 26); strip(900, 170, 124, 70, '#d9c8ff', 26);
+strip(0, 250, 1024, 10, '#9945ff', 5); strip(0, 268, 1024, 8, '#c58bff', 4); strip(0, 284, 1024, 9, '#19c8ff', 5); strip(0, 300, 1024, 10, '#14f195', 5); strip(0, 318, 1024, 8, '#b8ffe2', 5);
+const tex = new THREE.CanvasTexture(ec); tex.mapping = THREE.EquirectangularReflectionMapping; tex.colorSpace = THREE.SRGBColorSpace; scene.environment = new THREE.PMREMGenerator(R).fromEquirectangular(tex).texture;
+const chrome = new THREE.MeshPhysicalMaterial({ color: 0xe2d9ff, metalness: 1, roughness: 0.09, clearcoat: 1, clearcoatRoughness: 0.05, iridescence: 0.6, iridescenceIOR: 1.6, iridescenceThicknessRange: [180, 760], envMapIntensity: 1.7 });
+const pts = []; for (let y = 1.75; y >= -0.5; y -= 0.25) pts.push(new THREE.Vector3(0.78, y, 0));
+for (let a = 0; a <= Math.PI; a += Math.PI / 14) pts.push(new THREE.Vector3(Math.cos(a) * 0.78, -0.5 - Math.sin(a) * 0.86, 0));
+pts.push(new THREE.Vector3(-0.78, -0.1, 0), new THREE.Vector3(-0.78, 0.38, 0));
+const hook = new THREE.Group(); hook.add(new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts), 220, 0.27, 40, false), chrome));
+const add = (geo, x, y, rz) => { const m = new THREE.Mesh(geo, chrome); m.position.set(x, y, 0); if (rz) m.rotation.z = rz; hook.add(m); };
+add(new THREE.ConeGeometry(0.27, 0.8, 40), -0.78, 0.78); add(new THREE.SphereGeometry(0.27, 32, 24), 0.78, 1.75); add(new THREE.ConeGeometry(0.19, 0.95, 32), -0.42, 0.2, Math.PI - 0.7); add(new THREE.TorusGeometry(0.34, 0.12, 28, 80), 0.78, 2.28);
+hook.scale.set(1, 1, 0.82); hook.position.y = -0.35; scene.add(hook);
+const size = () => { const w = cv.clientWidth, h = cv.clientHeight; R.setSize(w, h, false); cam.aspect = w / h; cam.position.z = w < 700 ? 12.5 : 9.2; cam.updateProjectionMatrix(); }; addEventListener('resize', size); size();
+let mx = 0, my = 0, tx = 0, ty = 0; addEventListener('pointermove', (e) => { mx = e.clientX / innerWidth - 0.5; my = e.clientY / innerHeight - 0.5; }); const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+function frame(t) { const s = t / 1000; tx += (mx - tx) * 0.05; ty += (my - ty) * 0.05; hook.rotation.y = (still ? 0.5 : Math.sin(s * 0.45) * 0.7 + 0.25) + tx * 0.9; hook.rotation.x = -0.12 + ty * 0.5; hook.rotation.z = -0.18 + Math.sin(s * 0.3) * 0.04;
+  hook.position.y = -0.35 + (still ? 0 : Math.sin(s * 0.8) * 0.08) + scrollY * 0.0022; const k = Math.max(0, 1 - scrollY / (innerHeight * 0.9)); cv.style.opacity = k; if (k > 0) R.render(scene, cam); requestAnimationFrame(frame); }
+requestAnimationFrame(frame); window.__ready = true;
+</script></body></html>
