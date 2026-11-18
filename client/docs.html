@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Docs | {{NAME}}</title><meta name="description" content="{{NAME}} API reference: decode Solana token extensions, list tokens by power, inspect transfer-hook programs, quote and build swaps, MCP tools.">
+<link rel="icon" href="/mark.svg"><link rel="stylesheet" href="/style.css">
+<style>
+main{padding:120px 0 90px}.lay{display:grid;grid-template-columns:230px 1fr;gap:54px;align-items:start}
+.side{position:sticky;top:104px;display:grid;gap:2px}.side a{padding:8px 14px;border-radius:12px;color:var(--lav2);font-size:15px}.side a:hover{background:rgba(170,140,255,.1);color:#fff}.side b{font:500 11.5px var(--mono);letter-spacing:.16em;text-transform:uppercase;color:var(--mut);padding:16px 14px 6px}
+.doc h1{font:500 clamp(40px,5vw,62px)/1.02 var(--sans);letter-spacing:-.03em;margin-bottom:18px}.doc h2{font:500 32px var(--sans);letter-spacing:-.02em;margin:72px 0 14px;padding-top:20px;border-top:1px solid var(--line);scroll-margin-top:100px}
+.doc p,.doc li{color:var(--dim);margin-bottom:12px;max-width:760px}.doc ul{padding-left:20px}.doc code{font:400 14px var(--mono);color:var(--lav);background:rgba(170,140,255,.1);padding:2px 7px;border-radius:7px}
+.doc pre.code{margin:14px 0 20px}.doc table.t{margin:14px 0 22px}.doc table.t td{color:var(--dim);font-size:14.5px}.doc table.t td:first-child{font-family:var(--mono);color:var(--ink);white-space:nowrap}
+.ep{display:inline-block;font:500 12px var(--mono);padding:3px 9px;border-radius:7px;margin-right:8px;background:rgba(20,241,149,.14);color:#14f195}.ep.p{background:rgba(170,140,255,.18);color:var(--lav)}
+@media(max-width:900px){.lay{grid-template-columns:1fr}.side{display:none}}
+</style></head><body>
+<main><div class="wrap lay">
+<aside class="side"><b>Start</b><a href="#intro">Introduction</a><a href="#quickstart">Quickstart</a><b>Products</b><a href="#decode">Decode API</a><a href="#tokens">Token index</a><a href="#hooks">Hook programs</a><a href="#check">Token check</a><a href="#swap">Quote &amp; swap</a><a href="#launch">Launchpad</a><a href="#agents">Agent tools (MCP)</a><b>Concepts</b><a href="#powers">The powers</a><a href="#risk">Risk levels</a><a href="#errors">Errors</a></aside>
+<article class="doc">
+<div class="eyebrow">Documentation</div><h1 style="margin-top:14px" id="intro">One API for Solana token extensions.</h1>
+<p class="lead">{{NAME}} reads what a Solana token is allowed to do to the people who hold it. It reads the chain and returns data or unsigned transactions, and its launchpad creates new tokens with the label already known. It never holds keys and never signs.</p>
+<p>The Token-2022 program lets a mint carry extensions: a transfer hook that runs a program inside every transfer, a transfer fee, a permanent delegate that can move anyone's balance, accounts frozen by default, a pause switch. Together with the classic mint and freeze authorities, these decide what holding a token really means. {{NAME}} decodes them for any mint, keeps an index of thousands of traded tokens, tracks the transfer-hook programs behind them, and attaches the warnings to every quote.</p>
+
+<h2 id="quickstart">Quickstart</h2>
+<p>Open, keyless, plain JSON, open CORS. The base URL is <code id="base"></code>.</p><pre class="code" id="qs"></pre>
+
+<h2 id="decode">Decode API</h2>
+<table class="t"><tbody><tr><td><span class="ep">GET</span>/v1/tokens/:mint</td><td>Every power the mint holds, with details (hook program, fee rate, delegate, authorities), capability notes, a risk level, and market data.</td></tr><tr><td><span class="ep">GET</span>/v1/powers</td><td>The catalogue of powers and their levels.</td></tr></tbody></table>
+<p>Works for any mint on either token program, indexed or not: it reads the mint account live. <code>details.transferHookSlot</code> appears when no hook program is set but an authority could attach one later.</p>
+
+<h2 id="tokens">Token index</h2>
+<table class="t"><tbody><tr><td><span class="ep">GET</span>/v1/tokens</td><td>Indexed tokens. <code>power</code> (one or more, comma-separated, e.g. <code>transferHook,transferFee</code>), <code>hook</code> (a hook program), <code>program</code> (<code>token-2022</code> or <code>spl-token</code>), <code>verified</code>, <code>q</code>, <code>sort</code> (<code>mcap</code>, <code>liquidity</code>, <code>volume</code>, <code>holders</code>, <code>recent</code>), <code>limit</code>, <code>offset</code>.</td></tr><tr><td><span class="ep">GET</span>/v1/census</td><td>How many decoded tokens hold each power, and their combined market cap.</td></tr><tr><td><span class="ep">GET</span>/v1/stats</td><td>Index totals and sync state.</td></tr></tbody></table>
+<p>The index takes its token list from Jupiter (verified tokens, the most traded, trending and newest) and decodes each mint from the chain, refreshing every few hours. Market data comes from Jupiter; the powers always come from the mint account.</p>
+
+<h2 id="hooks">Hook programs</h2>
+<table class="t"><tbody><tr><td><span class="ep">GET</span>/v1/hooks</td><td>Transfer-hook programs ranked by how many indexed tokens run them.</td></tr><tr><td><span class="ep">GET</span>/v1/hooks/:program</td><td>One program: whether it is deployed, its upgrade authority, and the tokens that use it.</td></tr></tbody></table>
+<p>A transfer hook is only as fixed as its program. If the program has an upgrade authority, the rules of every transfer can be replaced after you buy. {{NAME}} reads the program's data account to tell you.</p>
+
+<h2 id="check">Token check</h2>
+<p><code>GET /v1/tokens/:mint/check</code> combines the mint's powers, the hook program's upgradeability, and (with <code>amount</code> in SOL) a live quote into a risk level with plain-English reasons. Show the reasons to your users, not only the level.</p>
+
+<h2 id="swap">Quote &amp; swap</h2>
+<table class="t"><tbody><tr><td><span class="ep">GET</span><span class="ep p">POST</span>/v1/quote</td><td><code>inputMint</code>, <code>outputMint</code>, <code>amount</code> (decimal, input units), <code>slippageBps</code>. Routed by Jupiter; the response carries the warnings for both tokens.</td></tr><tr><td><span class="ep p">POST</span>/v1/swap/build</td><td>The same fields plus <code>user</code>. Returns an unsigned versioned transaction in base64 for the wallet to sign.</td></tr></tbody></table>
+
+<h2 id="launch">Launchpad</h2>
+<p>One transaction creates a Token-2022 mint with its extensions, writes its name, symbol and link into the mint, opens your token account, mints the whole supply to it, and removes the mint authority. Nothing is deployed and no program stands between you and the token program: the instructions go straight to System, Token-2022 and the Associated Token program.</p>
+<table class="t"><tbody>
+<tr><td><span class="ep">GET</span>/v1/launch/options</td><td>The presets (<code>clean</code>, <code>fee</code>, <code>hooked</code>) and the limits.</td></tr>
+<tr><td><span class="ep p">POST</span>/v1/launch/build</td><td><code>creator</code>, <code>mint</code>, <code>name</code>, <code>symbol</code>, then the rules: <code>decimals</code> (6), <code>supply</code> (1,000,000,000), <code>feeBps</code> (0 to 1000), <code>maxFee</code>, <code>lockFee</code> (true), <code>hookProgram</code>, <code>lockHook</code> (true), <code>keepMintAuthority</code> (false), <code>freezeAuthority</code> (false), <code>lockMetadata</code> (false). Metadata: your own <code>uri</code>, or <code>description</code>, <code>image</code>, <code>website</code>, <code>x</code> and this node serves the JSON.</td></tr>
+<tr><td><span class="ep p">POST</span>/v1/launch/send</td><td><code>mint</code> and the signed <code>transaction</code> (base64). Both signatures are verified here, then the transaction is passed to Solana.</td></tr>
+<tr><td><span class="ep">GET</span>/v1/launch/:mint</td><td>One launch read back from the chain: <code>built</code>, <code>sent</code>, <code>live</code>, <code>failed</code> or <code>expired</code>, with the decoded powers once it is live.</td></tr>
+<tr><td><span class="ep">GET</span>/v1/launch/list</td><td>Launches confirmed on chain, newest first. <code>creator</code>, <code>limit</code>, <code>offset</code>.</td></tr>
+<tr><td><span class="ep">GET</span>/v1/launch/meta/:mint</td><td>The metadata JSON a launched mint points at.</td></tr>
+<tr><td><span class="ep">GET</span>/v1/launch/fees/:mint</td><td>Transfer fees withheld for the fee authority, on the mint and on holder accounts. Optional <code>accounts</code> (comma-separated token accounts) to name where to look.</td></tr>
+<tr><td><span class="ep p">POST</span>/v1/launch/claim</td><td><code>mint</code>, <code>authority</code>. An unsigned transaction that withdraws the withheld fees to the authority's own token account.</td></tr></tbody></table>
+<p><b>Two signatures.</b> <code>mint</code> is a fresh public key you generate; its secret never leaves you. The build response is an unsigned legacy transaction: sign it with the creator wallet first, then with the mint key, and post it to <code>/v1/launch/send</code>. On the launch page the mint key is made in your browser tab and used once.</p>
+<p><b>Checked before you sign.</b> Every build is run against the chain as it stands. <code>simulation.ok</code> says whether Solana would accept it, <code>rent.total</code> is what it would cost your wallet, and <code>preview</code> is the label decoded from the mint the chain would create: the same powers and risk level <code>/v1/tokens/:mint</code> will return once it exists.</p>
+<p><b>What each rule does to the label.</b> A transfer fee reads as medium risk; with <code>lockFee</code> the note says the rate can no longer be changed. A transfer hook reads as high risk, and the build tells you if your hook program is still upgradeable. Keeping the mint or freeze authority adds those powers. A fixed-supply token with no fee and no hook reads as low risk.</p>
+<p><b>Fees.</b> {{NAME}} takes no launch fee and no share of your transfer fee. You pay Solana's rent for the mint and your token account, about 0.006 SOL, plus the network fee. Transfer fees accumulate on the receiving accounts; you are the withdraw authority and claim them whenever you like.</p>
+<p><b>Liquidity.</b> The whole supply lands in your wallet. Open a pool with it on the venue you prefer; check that the venue supports the extensions you chose, since some pools do not accept tokens with a transfer hook.</p>
+
+<h2 id="agents">Agent tools (MCP)</h2>
+<p>The endpoint <code id="mcpurl"></code> speaks MCP over streamable HTTP (JSON-RPC on POST, JSON responses, no sessions). Thirteen tools, none of which signs or sends: <code>decode_token</code>, <code>check_token</code>, <code>list_tokens</code>, <code>list_hook_programs</code>, <code>inspect_hook_program</code>, <code>quote</code>, <code>build_swap</code>, <code>list_powers</code>, <code>get_stats</code>, <code>build_launch</code>, <code>list_launches</code>, <code>get_token_fees</code>, <code>build_fee_claim</code>.</p><pre class="code" id="mcp"></pre>
+
+<h2 id="powers">The powers</h2>
+<table class="t" id="ptab"><thead><tr><th>Power</th><th>Level</th><th>What it means for a holder</th></tr></thead><tbody></tbody></table>
+
+<h2 id="risk">Risk levels</h2>
+<table class="t"><tbody><tr><td>high</td><td>A permanent delegate, an active transfer hook, a non-transferable token, accounts frozen by default, or a pause switch: someone can move, block or stop your tokens.</td></tr><tr><td>medium</td><td>A transfer fee, a freeze authority or a mint authority.</td></tr><tr><td>low</td><td>None of the above.</td></tr></tbody></table>
+<p>A level describes what the token is able to do, not what its issuer will do. Regulated stablecoins and tokenized stocks often hold high-level powers on purpose.</p>
+
+<h2 id="errors">Errors</h2>
+<p>Every error has the same shape: <code>{ "error": { "code", "message" } }</code>.</p>
+<table class="t"><tbody><tr><td>400 bad_request</td><td>Missing or malformed input.</td></tr><tr><td>404 not_found</td><td>Unknown route, or the address is not a token mint.</td></tr><tr><td>403 not_authority</td><td>Only the token's withdraw authority can claim its fees.</td></tr><tr><td>422 no_route</td><td>Jupiter has no route for that pair or size.</td></tr><tr><td>422 bad_hook</td><td>The hook program address is not an executable program.</td></tr><tr><td>422 rpc_rejected</td><td>Solana turned the transaction down; the message says why.</td></tr><tr><td>502 upstream_error</td><td>The Solana RPC or Jupiter did not answer.</td></tr></tbody></table>
+</article></div></main>
+<script type="module">
+import { nav, foot, $ } from '/common.js'; import { POWERS } from '/lib/ext.js';
+nav('/docs'); foot(); const O = location.origin; $('base').textContent = O; $('mcpurl').textContent = O + '/mcp';
+$('qs').innerHTML = `<span class="c"># What can this token do to its holders? (PYUSD)</span>\ncurl ${O}/v1/tokens/2b1kV6DkPAnxd5ixfnxCpjxmKwqjjaYmCZfHsFu24GXo\n\n<span class="c"># Tokens that run a transfer hook, largest first</span>\ncurl "${O}/v1/tokens?power=transferHook&sort=mcap"\n\n<span class="c"># Check before buying 1 SOL of it</span>\ncurl "${O}/v1/tokens/2b1kV6DkPAnxd5ixfnxCpjxmKwqjjaYmCZfHsFu24GXo/check?amount=1"\n\n<span class="c"># Build the unsigned swap</span>\ncurl -X POST ${O}/v1/swap/build -H "content-type: application/json" \\\n  -d '{"inputMint":"So11111111111111111111111111111111111111112","outputMint":"&lt;mint&gt;","amount":"1","user":"&lt;wallet&gt;"}'`;
+$('mcp').innerHTML = `<span class="c"># Claude Code</span>\nclaude mcp add --transport http cast ${O}/mcp\n\n<span class="c"># Cursor: .cursor/mcp.json</span>\n{ "mcpServers": { "cast": { "url": "${O}/mcp" } } }`;
+document.querySelector('#ptab tbody').innerHTML = POWERS.map((p) => '<tr><td>' + p.label + '</td><td><span class="chip ' + p.level + '">' + p.level + '</span></td><td>' + p.note + '</td></tr>').join('');
+</script></body></html>
